@@ -25,7 +25,6 @@ describe("/api/categories", () => {
         .get("/api/categories")
         .expect(200)
         .then(({ body }) => {
-          console.log(body);
           expect(body.categories).toBeInstanceOf(Array);
           body.categories.forEach((category) => {
             expect(category).toMatchObject({
@@ -34,6 +33,9 @@ describe("/api/categories", () => {
             });
           });
         });
+    });
+    test("status: 404, responds with an error message when passed resource that doesn't exist", () => {
+      return request(app).get("/api/somethingTotallyDifferent").expect(404);
     });
   });
 });

@@ -8,6 +8,4 @@ exports.getCategories = (request, response, next) => {
     .catch((err) => {
       next(err);
     });
-
-  // add catch here
 };
