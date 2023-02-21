@@ -18,6 +18,29 @@ afterAll(() => {
   return db.end();
 });
 
+describe("/api/categories", () => {
+  describe("GET", () => {
+    it("responds with an array of categories", () => {
+      return request(app)
+        .get("/api/categories")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.categories).toBeInstanceOf(Array);
+          expect(body.categories.length).toBe(4);
+          body.categories.forEach((category) => {
+            expect(category).toMatchObject({
+              slug: expect.any(String),
+              description: expect.any(String),
+            });
+          });
+        });
+    });
+    test("status: 404, responds with an error message when passed resource that doesn't exist", () => {
+      return request(app).get("/api/somethingTotallyDifferent").expect(404);
+    });
+  });
+});
+
 describe("/api/reviews", () => {
   describe("GET", () => {
     it("responds with an array of reviews", () => {
@@ -25,7 +48,22 @@ describe("/api/reviews", () => {
         .get("/api/reviews")
         .expect(200)
         .then(({ body }) => {
-          console.log(body, "<< body");
+          expect(body.reviews).toBeInstanceOf(Array);
+          //console.log(body.reviews, "<< body");
+          expect(body.reviews.length).toBe(13);
+          body.reviews.forEach((review) => {
+            expect(review).toMatchObject({
+              owner: expect.any(String),
+              title: expect.any(String),
+              review_id: expect.any(Number),
+              category: expect.any(String),
+              review_img_url: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              designer: expect.any(String),
+              comment_count: expect.any(Number),
+            });
+          });
         });
     });
     it("responds with the reviews in descending order by date", () => {});

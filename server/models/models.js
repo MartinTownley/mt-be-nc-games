@@ -1,12 +1,27 @@
 const db = require("../../db/connection.js");
 
-exports.fetchReviews = () => {
+exports.fetchCategories = () => {
   const queryString = `
     SELECT *
-    FROM reviews
+    FROM categories
     `;
 
   return db.query(queryString).then((response) => {
+    return response.rows;
+  });
+};
+
+exports.fetchReviews = () => {
+  const queryString = `
+  SELECT reviews.*, CAST( COUNT(comment_id) AS INT ) AS comment_count
+  FROM reviews
+  LEFT JOIN comments ON reviews.review_id = comments.review_id
+  GROUP BY reviews.review_id
+  ;
+  `;
+
+  return db.query(queryString).then((response) => {
+    console.log(response.rows);
     return response.rows;
   });
 };
