@@ -1,9 +1,14 @@
 const express = require("express");
-const { getCategories } = require("./server/controllers/controllers.js");
+const {
+  getCategories,
+  getReviews,
+} = require("./server/controllers/controllers.js");
 
 const app = express();
 
 app.get("/api/categories", getCategories);
+
+app.get("/api/reviews", getReviews);
 
 app.use((err, req, res, next) => {
   console.log(err, "<< err app.js ln 9");

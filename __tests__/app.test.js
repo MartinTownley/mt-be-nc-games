@@ -18,6 +18,14 @@ afterAll(() => {
   return db.end();
 });
 
+describe("app", () => {
+  describe("server errors", () => {
+    test("404: responds with an error message when the path is invalid", () => {
+      return request(app).get("/api/somethingTotallyDifferent").expect(404);
+    });
+  });
+});
+
 describe("/api/categories", () => {
   describe("GET", () => {
     it("responds with an array of categories", () => {
@@ -35,8 +43,43 @@ describe("/api/categories", () => {
           });
         });
     });
-    test("status: 404, responds with an error message when passed resource that doesn't exist", () => {
-      return request(app).get("/api/somethingTotallyDifferent").expect(404);
+  });
+});
+
+describe("/api/reviews", () => {
+  describe("GET", () => {
+    it("responds with an array of reviews", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toBeInstanceOf(Array);
+          expect(body.reviews.length).toBe(13);
+          body.reviews.forEach((review) => {
+            expect(review).toMatchObject({
+              owner: expect.any(String),
+              title: expect.any(String),
+              review_id: expect.any(Number),
+              category: expect.any(String),
+              review_img_url: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              designer: expect.any(String),
+              comment_count: expect.any(Number),
+            });
+          });
+        });
+    });
+    it("responds with the reviews in descending order by date", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toBeSorted({
+            descending: true,
+            key: "created_at",
+          });
+        });
     });
   });
 });
