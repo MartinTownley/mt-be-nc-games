@@ -11,7 +11,6 @@ exports.getCategories = (request, response, next) => {
 };
 
 exports.getReviews = (request, response, next) => {
-  console.log("getReviews called!");
   fetchReviews()
     .then((reviews) => {
       response.status(200).send({ reviews });

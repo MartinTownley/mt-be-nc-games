@@ -18,6 +18,14 @@ afterAll(() => {
   return db.end();
 });
 
+describe("app", () => {
+  describe("server errors", () => {
+    test("404: responds with an error message when the path is invalid", () => {
+      return request(app).get("/api/somethingTotallyDifferent").expect(404);
+    });
+  });
+});
+
 describe("/api/categories", () => {
   describe("GET", () => {
     it("responds with an array of categories", () => {
@@ -35,9 +43,6 @@ describe("/api/categories", () => {
           });
         });
     });
-    test("status: 404, responds with an error message when passed resource that doesn't exist", () => {
-      return request(app).get("/api/somethingTotallyDifferent").expect(404);
-    });
   });
 });
 
@@ -49,7 +54,6 @@ describe("/api/reviews", () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.reviews).toBeInstanceOf(Array);
-          //console.log(body.reviews, "<< body");
           expect(body.reviews.length).toBe(13);
           body.reviews.forEach((review) => {
             expect(review).toMatchObject({
@@ -66,9 +70,16 @@ describe("/api/reviews", () => {
           });
         });
     });
-    it("responds with the reviews in descending order by date", () => {});
-    test("status: 404, responds with an error message when passed resource that doesn't exist", () => {
-      return request(app).get("/api/somethingDifferent").expect(404);
+    it("responds with the reviews in descending order by date", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toBeSorted({
+            descending: true,
+            key: "created_at",
+          });
+        });
     });
   });
 });

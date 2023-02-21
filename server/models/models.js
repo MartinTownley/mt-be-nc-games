@@ -17,11 +17,11 @@ exports.fetchReviews = () => {
   FROM reviews
   LEFT JOIN comments ON reviews.review_id = comments.review_id
   GROUP BY reviews.review_id
+  ORDER BY reviews.created_at DESC
   ;
   `;
 
   return db.query(queryString).then((response) => {
-    console.log(response.rows);
     return response.rows;
   });
 };
