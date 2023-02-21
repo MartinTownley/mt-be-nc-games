@@ -25,3 +25,14 @@ exports.fetchReviews = () => {
     return response.rows;
   });
 };
+
+exports.fetchReviewById = (id) => {
+  const queryString = `
+  SELECT * FROM reviews WHERE review_id = $1
+  ;
+  `;
+
+  return db.query(queryString, [id]).then((response) => {
+    return response.rows[0];
+  });
+};
