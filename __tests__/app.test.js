@@ -154,6 +154,14 @@ describe("app", () => {
             });
           });
       });
+      it("responds with an empty array if there are no comments for a given existent review_id", () => {
+        return request(app)
+          .get("/api/reviews/1/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).toBe(0);
+          });
+      });
     });
   });
 });
