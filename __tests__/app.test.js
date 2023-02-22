@@ -21,7 +21,7 @@ afterAll(() => {
 describe("app", () => {
   describe("server errors", () => {
     test("404: responds with an error message when the path is invalid", () => {
-      return request(app).get("/api/somethingTotallyDifferent").expect(404);
+      return request(app).get("/api/not-a-path").expect(404);
     });
   });
 
@@ -90,7 +90,6 @@ describe("app", () => {
           .get("/api/reviews/1")
           .expect(200)
           .then(({ body }) => {
-            //console.log(body.review);
             expect(body.review).toEqual({
               review_id: 1,
               title: "Agricola",
@@ -111,6 +110,14 @@ describe("app", () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).toBe("Invalid input");
+          });
+      });
+      it("404: responds with correct error message for valid but non-existent review_id", () => {
+        return request(app)
+          .get("/api/reviews/999")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid ID");
           });
       });
     });

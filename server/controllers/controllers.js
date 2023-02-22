@@ -25,8 +25,10 @@ exports.getReviews = (request, response, next) => {
 };
 
 exports.getReviewById = (request, response, next) => {
+  //console.log("** controllers.js: I'm in getReviewById body");
   const { review_id } = request.params;
   fetchReviewById(review_id)
+    // back from the model.
     .then((review) => {
       response.status(200).send({ review });
     })
