@@ -8,6 +8,7 @@ const {
 exports.getCategories = (request, response, next) => {
   fetchCategories()
     .then((categories) => {
+      console.log();
       response.status(200).send({ categories });
     })
     .catch((err) => {
@@ -40,7 +41,12 @@ exports.getReviewById = (request, response, next) => {
 
 exports.getCommentsByReviewId = (request, response, next) => {
   const { review_id } = request.params;
-  fetchCommentsByReviewId(review_id).then((comments) => {
-    console.log(comments, "<< comments");
-  });
+  fetchCommentsByReviewId(review_id)
+    .then((comments) => {
+      console.log("** response sending");
+      response.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

@@ -48,7 +48,22 @@ exports.fetchReviewById = (id) => {
     // goes back to controller
   });
 };
-exports.fetchCommentsByReviewId = () => {
+exports.fetchCommentsByReviewId = (id) => {
+  console.log(id, " **fetchCommentsByReviewId reached");
+
+  const queryString = `
+  SELECT * 
+  FROM comments 
+  WHERE comments.review_id = $1
+  ORDER BY comments.created_at DESC
+  ;
+  `;
+  return db.query(queryString, [id]).then((response) => {
+    const comments = response.rows;
+    console.log(comments, "<< comments in models.js");
+    return comments;
+  });
+  //const queryString =
   /* get an array of the comments for the given review_id:
   - comment_id
   - votes

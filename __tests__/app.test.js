@@ -31,6 +31,7 @@ describe("app", () => {
           .get("/api/categories")
           .expect(200)
           .then(({ body }) => {
+            console.log(body, "<< cat body");
             expect(body.categories).toBeInstanceOf(Array);
             expect(body.categories.length).toBe(4);
             body.categories.forEach((category) => {
@@ -123,15 +124,36 @@ describe("app", () => {
 
   describe("/api/reviews/:review_id/comments", () => {
     describe("GET", () => {
-      // it("responds with an array of comments for the given review_id", () => {
-      //   return request(app)
-      //     .get("/api/reviews/2/comments")
-      //     .expect(200)
-      //     .then(({ body }) => {
-      //       console.log(body);
-      //       //expect (body.reviews.comments).
-      //     });
-      // });
+      it("responds with an array of comments for the given review_id", () => {
+        return request(app)
+          .get("/api/reviews/2/comments")
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body, "<< BODY");
+            expect(body.comments).toBeInstanceOf(Array);
+            body.comments.forEach((comment) => {
+              expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                review_id: expect.any(Number),
+                created_at: expect.any(String),
+                body: expect.any(String),
+                author: expect.any(String),
+              });
+            });
+          });
+      });
+      it("responds with most recent comments first", () => {
+        return request(app)
+          .get("/api/reviews/2/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).toBeSorted({
+              descending: true,
+              key: "created_at",
+            });
+          });
+      });
     });
   });
 });
