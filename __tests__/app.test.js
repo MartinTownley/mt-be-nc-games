@@ -105,6 +105,14 @@ describe("app", () => {
             });
           });
       });
+      it("400: responds with an error message when passed a bad review id", () => {
+        return request(app)
+          .get("/api/reviews/not-an-id")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
+          });
+      });
     });
   });
 });
