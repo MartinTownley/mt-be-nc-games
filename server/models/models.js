@@ -38,6 +38,7 @@ exports.fetchReviewById = (id) => {
     return review;
   });
 };
+
 exports.fetchCommentsByReviewId = (id) => {
   const queryString = `
   SELECT * 
@@ -50,6 +51,7 @@ exports.fetchCommentsByReviewId = (id) => {
     .query(queryString, [id])
     .then((response) => {
       // check if the response is an empty array because there are no comments, or because the review_id doesn't exist:
+
       if (response.rows[0] === undefined) {
         return exports.fetchReviewById(id);
       }
@@ -63,4 +65,22 @@ exports.fetchCommentsByReviewId = (id) => {
       }
       return []; // to satisfy test "responds with an empty array if..."
     });
+};
+
+exports.insertCommentByReviewId = (id, username, comment_body) => {
+  return exports.fetchReviewById(id).then((response) => {
+    const queryString = `
+    INSERT into comments
+    (body, review_id, author)
+    VALUES ($1, $2, $3) 
+    RETURNING *
+    ;`;
+    return db
+      .query(queryString, [comment_body, response.review_id, username])
+      .then(({ rows }) => {
+        const comment = rows[0];
+
+        return comment;
+      });
+  });
 };

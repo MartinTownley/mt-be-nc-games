@@ -178,5 +178,79 @@ describe("app", () => {
           });
       });
     });
+
+    describe("POST", () => {
+      it("201: responds with the newly created comment object", () => {
+        const requestBody = {
+          username: "mallionaire",
+          body: "I am the newly inserted comment body",
+        };
+        return request(app)
+          .post("/api/reviews/1/comments")
+          .send(requestBody)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment).toMatchObject({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              body: "I am the newly inserted comment body",
+              author: "mallionaire",
+              review_id: 1,
+            });
+          });
+      });
+      it("400: responds with the correct error message for a request body with missing essential properties", () => {
+        // psql 23502: not null violation
+        const requestBody = {
+          username: "mallionaire",
+        };
+        return request(app)
+          .post("/api/reviews/1/comments")
+          .send(requestBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
+          });
+      });
+      it("400: responds with the correct error message for a malformed request", () => {
+        const requestBody = {
+          username: "not-a-username",
+          body: "I am a valid body",
+        };
+        return request(app)
+          .post("/api/reviews/1/comments")
+          .send(requestBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
+          });
+      });
+      it("400: responds with the correct error message for a bad review_id", () => {
+        const requestBody = {
+          username: "mallionaire",
+          body: "I am a valid body",
+        };
+        return request(app)
+          .post("/api/reviews/not-an-id/comments")
+          .send(requestBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
+          });
+      });
+      it("404: responds with correct error message for valid but non-existent review_id", () => {
+        const requestBody = {
+          username: "mallionaire",
+          body: "I am a valid body",
+        };
+        return request(app)
+          .post("/api/reviews/999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("ID does not exist");
+          });
+      });
+    });
   });
 });
