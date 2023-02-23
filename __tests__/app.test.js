@@ -178,6 +178,7 @@ describe("app", () => {
           });
       });
     });
+
     describe("POST", () => {
       it("201: responds with the newly created comment object", () => {
         const requestBody = {
@@ -236,6 +237,18 @@ describe("app", () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).toBe("Invalid input");
+          });
+      });
+      it("404: responds with correct error message for valid but non-existent review_id", () => {
+        const requestBody = {
+          username: "mallionaire",
+          body: "I am a valid body",
+        };
+        return request(app)
+          .post("/api/reviews/999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("ID does not exist");
           });
       });
     });

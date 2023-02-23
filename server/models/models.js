@@ -51,6 +51,7 @@ exports.fetchCommentsByReviewId = (id) => {
     .query(queryString, [id])
     .then((response) => {
       // check if the response is an empty array because there are no comments, or because the review_id doesn't exist:
+
       if (response.rows[0] === undefined) {
         return exports.fetchReviewById(id);
       }
@@ -67,19 +68,19 @@ exports.fetchCommentsByReviewId = (id) => {
 };
 
 exports.insertCommentByReviewId = (id, username, comment_body) => {
-  console.log(id, "<< id", username, "<< username", comment_body, "<< body");
+  return exports.fetchReviewById(id).then((response) => {
+    const queryString = `
+    INSERT into comments
+    (body, review_id, author)
+    VALUES ($1, $2, $3) 
+    RETURNING *
+    ;`;
+    return db
+      .query(queryString, [comment_body, response.review_id, username])
+      .then(({ rows }) => {
+        const comment = rows[0];
 
-  // votes should be zero
-  const queryString = `
-  INSERT into comments
-  (body, review_id, author)
-  VALUES ($1, $2, $3) 
-  RETURNING *
-  ;`;
-  return db
-    .query(queryString, [comment_body, id, username])
-    .then(({ rows }) => {
-      console.log(rows, "<< response.rows");
-      return rows[0];
-    });
+        return comment;
+      });
+  });
 };

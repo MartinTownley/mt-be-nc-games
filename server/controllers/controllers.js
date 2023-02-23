@@ -49,14 +49,8 @@ exports.getCommentsByReviewId = (request, response, next) => {
 };
 
 exports.postCommentByReviewId = (request, response, next) => {
-  // destructure the request body here.
-  //console.log("function: postCommentsByReviewId");
-  //console.log("L_____", request.body, "<< request.body");
   const { username, body } = request.body;
   const { review_id } = request.params;
-  console.log(username, "<< username");
-  console.log(body, "<< body");
-  console.log(review_id, "<< review_id");
   insertCommentByReviewId(review_id, username, body)
     .then((comment) => {
       response.status(201).send({ comment });
