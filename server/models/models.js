@@ -38,6 +38,7 @@ exports.fetchReviewById = (id) => {
     return review;
   });
 };
+
 exports.fetchCommentsByReviewId = (id) => {
   const queryString = `
   SELECT * 
@@ -62,5 +63,23 @@ exports.fetchCommentsByReviewId = (id) => {
         return response; // in this case, the comments array.
       }
       return []; // to satisfy test "responds with an empty array if..."
+    });
+};
+
+exports.insertCommentByReviewId = (id, username, comment_body) => {
+  console.log(id, "<< id", username, "<< username", comment_body, "<< body");
+
+  // votes should be zero
+  const queryString = `
+  INSERT into comments
+  (body, review_id, author)
+  VALUES ($1, $2, $3) 
+  RETURNING *
+  ;`;
+  return db
+    .query(queryString, [comment_body, id, username])
+    .then(({ rows }) => {
+      console.log(rows, "<< response.rows");
+      return rows[0];
     });
 };

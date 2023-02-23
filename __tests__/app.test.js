@@ -178,5 +178,27 @@ describe("app", () => {
           });
       });
     });
+    describe("POST", () => {
+      it("201: responds with the newly created comment object", () => {
+        const requestBody = {
+          username: "mallionaire",
+          body: "I am the newly inserted comment body",
+        };
+        return request(app)
+          .post("/api/reviews/1/comments")
+          .send(requestBody)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.comment).toMatchObject({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              body: "I am the newly inserted comment body",
+              author: "mallionaire",
+              review_id: 1,
+            });
+          });
+      });
+    });
   });
 });
