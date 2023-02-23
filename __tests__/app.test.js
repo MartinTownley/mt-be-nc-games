@@ -31,7 +31,6 @@ describe("app", () => {
           .get("/api/categories")
           .expect(200)
           .then(({ body }) => {
-            console.log(body, "<< cat body");
             expect(body.categories).toBeInstanceOf(Array);
             expect(body.categories.length).toBe(4);
             body.categories.forEach((category) => {
@@ -116,7 +115,7 @@ describe("app", () => {
           .get("/api/reviews/999")
           .expect(404)
           .then(({ body }) => {
-            expect(body.msg).toBe("Invalid ID");
+            expect(body.msg).toBe("ID does not exist");
           });
       });
     });
@@ -129,7 +128,6 @@ describe("app", () => {
           .get("/api/reviews/2/comments")
           .expect(200)
           .then(({ body }) => {
-            console.log(body, "<< BODY");
             expect(body.comments).toBeInstanceOf(Array);
             body.comments.forEach((comment) => {
               expect(comment).toMatchObject({
@@ -160,6 +158,22 @@ describe("app", () => {
           .expect(200)
           .then(({ body }) => {
             expect(body.comments.length).toBe(0);
+          });
+      });
+      it("404: responds with correct error message for valid but non-existent review_id", () => {
+        return request(app)
+          .get("/api/reviews/999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("ID does not exist");
+          });
+      });
+      it("400: responds with correct error message for a bad review_id", () => {
+        return request(app)
+          .get("/api/reviews/not-an-id/comments")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
           });
       });
     });

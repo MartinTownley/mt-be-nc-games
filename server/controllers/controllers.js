@@ -8,7 +8,6 @@ const {
 exports.getCategories = (request, response, next) => {
   fetchCategories()
     .then((categories) => {
-      console.log();
       response.status(200).send({ categories });
     })
     .catch((err) => {
@@ -27,10 +26,8 @@ exports.getReviews = (request, response, next) => {
 };
 
 exports.getReviewById = (request, response, next) => {
-  //console.log("** controllers.js: I'm in getReviewById body");
   const { review_id } = request.params;
   fetchReviewById(review_id)
-    // back from the model.
     .then((review) => {
       response.status(200).send({ review });
     })
@@ -43,7 +40,6 @@ exports.getCommentsByReviewId = (request, response, next) => {
   const { review_id } = request.params;
   fetchCommentsByReviewId(review_id)
     .then((comments) => {
-      console.log("** response sending");
       response.status(200).send({ comments });
     })
     .catch((err) => {
