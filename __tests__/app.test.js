@@ -24,7 +24,6 @@ describe("app", () => {
       return request(app).get("/api/not-a-path").expect(404);
     });
   });
-
   describe("/api/categories", () => {
     describe("GET", () => {
       it("responds with an array of categories", () => {
@@ -82,7 +81,6 @@ describe("app", () => {
       });
     });
   });
-
   describe("/api/reviews/:review_id", () => {
     describe("GET", () => {
       it("200: responds with a single review object", () => {
@@ -117,7 +115,66 @@ describe("app", () => {
           .get("/api/reviews/999")
           .expect(404)
           .then(({ body }) => {
-            expect(body.msg).toBe("Invalid ID");
+            expect(body.msg).toBe("ID does not exist");
+          });
+      });
+    });
+  });
+
+  describe("/api/reviews/:review_id/comments", () => {
+    describe("GET", () => {
+      it("responds with an array of comments for the given review_id", () => {
+        return request(app)
+          .get("/api/reviews/2/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).toBeInstanceOf(Array);
+            expect(body.comments.length).toBe(3);
+            body.comments.forEach((comment) => {
+              expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                review_id: 2,
+                created_at: expect.any(String),
+                body: expect.any(String),
+                author: expect.any(String),
+              });
+            });
+          });
+      });
+      it("responds with most recent comments first", () => {
+        return request(app)
+          .get("/api/reviews/2/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments).toBeSorted({
+              descending: true,
+              key: "created_at",
+            });
+          });
+      });
+      it("responds with an empty array if there are no comments for a given existent review_id", () => {
+        return request(app)
+          .get("/api/reviews/1/comments")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.comments.length).toBe(0);
+          });
+      });
+      it("404: responds with correct error message for valid but non-existent review_id", () => {
+        return request(app)
+          .get("/api/reviews/999/comments")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("ID does not exist");
+          });
+      });
+      it("400: responds with correct error message for a bad review_id", () => {
+        return request(app)
+          .get("/api/reviews/not-an-id/comments")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
           });
       });
     });
