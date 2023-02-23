@@ -57,7 +57,11 @@ exports.postCommentByReviewId = (request, response, next) => {
   console.log(username, "<< username");
   console.log(body, "<< body");
   console.log(review_id, "<< review_id");
-  insertCommentByReviewId(review_id, username, body).then((comment) => {
-    response.status(201).send({ comment });
-  });
+  insertCommentByReviewId(review_id, username, body)
+    .then((comment) => {
+      response.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

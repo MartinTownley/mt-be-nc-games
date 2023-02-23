@@ -199,6 +199,18 @@ describe("app", () => {
             });
           });
       });
+      it("400: responds with the correct error message for a malformed request", () => {
+        const requestBody = {
+          username: "mallionaire",
+        };
+        return request(app)
+          .post("/api/reviews/1/comments")
+          .send(requestBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
+          });
+      });
     });
   });
 });
