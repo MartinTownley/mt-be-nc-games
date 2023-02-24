@@ -1,4 +1,5 @@
 const db = require("../../db/connection.js");
+// -- CATEGORIES --
 exports.fetchCategories = () => {
   const queryString = `
     SELECT *
@@ -8,6 +9,8 @@ exports.fetchCategories = () => {
     return response.rows;
   });
 };
+
+// -- REVIEWS --
 exports.fetchReviews = () => {
   const queryString = `
   SELECT reviews.*, CAST( COUNT(comment_id) AS INT ) AS comment_count
@@ -21,6 +24,7 @@ exports.fetchReviews = () => {
     return response.rows;
   });
 };
+
 exports.fetchReviewById = (id) => {
   const queryString = `
   SELECT * FROM reviews WHERE review_id = $1
@@ -100,5 +104,16 @@ exports.updateReviewById = (id, inc_votes) => {
         const review = response.rows[0];
         return review;
       });
+  });
+};
+
+// -- USERS --
+exports.fetchUsers = () => {
+  const queryString = `
+    SELECT *
+    FROM users
+    `;
+  return db.query(queryString).then((response) => {
+    return response.rows;
   });
 };

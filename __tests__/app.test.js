@@ -24,6 +24,7 @@ describe("app", () => {
       return request(app).get("/api/not-a-path").expect(404);
     });
   });
+  //-- CATEGORIES --
   describe("/api/categories", () => {
     describe("GET", () => {
       it("responds with an array of categories", () => {
@@ -43,7 +44,7 @@ describe("app", () => {
       });
     });
   });
-
+  //-- REVIEWS --
   describe("/api/reviews", () => {
     describe("GET", () => {
       it("responds with an array of reviews", () => {
@@ -205,7 +206,6 @@ describe("app", () => {
       });
     });
   });
-
   describe("/api/reviews/:review_id/comments", () => {
     describe("GET", () => {
       it("200: responds with an array of comments for the given review_id", () => {
@@ -334,6 +334,27 @@ describe("app", () => {
           .expect(404)
           .then(({ body }) => {
             expect(body.msg).toBe("ID does not exist");
+          });
+      });
+    });
+  });
+  //-- USERS ---
+  describe("/api/users", () => {
+    describe("GET", () => {
+      it("responds with an array of users", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.users).toBeInstanceOf(Array);
+            expect(body.users.length).toBe(4);
+            body.users.forEach((user) => {
+              expect(user).toMatchObject({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              });
+            });
           });
       });
     });
