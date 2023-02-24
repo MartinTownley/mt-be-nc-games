@@ -120,7 +120,7 @@ describe("app", () => {
       });
     });
     describe("PATCH", () => {
-      it("200: responds with the updated review", () => {
+      it("200: responds with the updated review when given a POSITIVE value for inc_votes", () => {
         const requestBody = { inc_votes: 10 };
         return request(app)
           .patch("/api/reviews/1")
@@ -140,6 +140,39 @@ describe("app", () => {
               owner: "mallionaire",
               created_at: "2021-01-18T10:00:20.514Z",
             });
+          });
+      });
+      it("200: responds with the updated review when given a NEGATIVE value for inc_votes", () => {
+        const requestBody = { inc_votes: -3 };
+        return request(app)
+          .patch("/api/reviews/3")
+          .send(requestBody)
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body, "<< body (app.test)");
+            expect(body.updated_review).toEqual({
+              review_id: 3,
+              title: "Ultimate Werewolf",
+              designer: "Akihisa Okui",
+              owner: "bainesface",
+              review_img_url:
+                "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?w=700&h=700",
+              review_body: "We couldn't find the werewolf!",
+              category: "social deduction",
+              created_at: "2021-01-18T10:01:41.251Z",
+              votes: 2,
+            });
+          });
+      });
+      it("400: responds with the correct error message for a request body with missing essential properties", () => {
+        // psql 23502: not null violation
+        const requestBody = {};
+        return request(app)
+          .patch("/api/reviews/1")
+          .send(requestBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
           });
       });
     });
