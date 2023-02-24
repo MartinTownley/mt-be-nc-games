@@ -88,6 +88,9 @@ describe("app", () => {
             //console.log(body, "<< body (testapp)");
             expect(body.reviews).toBeInstanceOf(Array);
             expect(body.reviews.length).toBe(11);
+            body.reviews.forEach((review) => {
+              expect(review.category).toBe("social deduction");
+            });
           });
       });
     });
