@@ -6,6 +6,7 @@ const {
   getReviewById,
   postCommentByReviewId,
   patchReviewById,
+  getUsers,
 } = require("./server/controllers/controllers.js");
 const {
   handle404NonExistentPath,
@@ -18,8 +19,10 @@ const app = express();
 
 app.use(express.json());
 
+// -- CATEGORIES --
 app.get("/api/categories", getCategories);
 
+// -- REVIEWS --
 app.get("/api/reviews", getReviews);
 
 app.get("/api/reviews/:review_id", getReviewById);
@@ -29,6 +32,9 @@ app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
 app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
 
 app.patch("/api/reviews/:review_id", patchReviewById);
+
+// -- USERS --
+app.get("/api/users", getUsers);
 
 app.use(handleCustomErrors);
 

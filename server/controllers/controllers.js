@@ -5,8 +5,10 @@ const {
   fetchCommentsByReviewId,
   insertCommentByReviewId,
   updateReviewById,
+  fetchUsers,
 } = require("../models/models.js");
 
+// -- CATEGORIES --
 exports.getCategories = (request, response, next) => {
   fetchCategories()
     .then((categories) => {
@@ -17,6 +19,7 @@ exports.getCategories = (request, response, next) => {
     });
 };
 
+// -- REVIEWS --
 exports.getReviews = (request, response, next) => {
   fetchReviews()
     .then((reviews) => {
@@ -67,6 +70,18 @@ exports.patchReviewById = (request, response, next) => {
   updateReviewById(review_id, inc_votes)
     .then((updated_review) => {
       response.status(200).send({ updated_review });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+// -- USERS --
+exports.getUsers = (request, response, next) => {
+  console.log("controller: getUsers called");
+  fetchUsers()
+    .then((users) => {
+      response.status(200).send({ users });
     })
     .catch((err) => {
       next(err);
