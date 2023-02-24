@@ -80,6 +80,16 @@ describe("app", () => {
             });
           });
       });
+      it("selects the reviews by the category value specified in the query", () => {
+        return request(app)
+          .get("/api/reviews?category=social+deduction")
+          .expect(200)
+          .then(({ body }) => {
+            //console.log(body, "<< body (testapp)");
+            expect(body.reviews).toBeInstanceOf(Array);
+            expect(body.reviews.length).toBe(11);
+          });
+      });
     });
   });
   describe("/api/reviews/:review_id", () => {

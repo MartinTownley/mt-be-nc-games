@@ -11,16 +11,24 @@ exports.fetchCategories = () => {
 };
 
 // -- REVIEWS --
-exports.fetchReviews = () => {
-  const queryString = `
+exports.fetchReviews = (category) => {
+  console.log(category, "<< model: category");
+  const queryValues = [];
+  let queryString = `
   SELECT reviews.*, CAST( COUNT(comment_id) AS INT ) AS comment_count
   FROM reviews
   LEFT JOIN comments ON reviews.review_id = comments.review_id
-  GROUP BY reviews.review_id
+  `;
+
+  if (category) {
+    queryValues.push(category);
+    queryString += ` WHERE category = $1`;
+  }
+  queryString += ` GROUP BY reviews.review_id
   ORDER BY reviews.created_at DESC
   ;
   `;
-  return db.query(queryString).then((response) => {
+  return db.query(queryString, queryValues).then((response) => {
     return response.rows;
   });
 };
