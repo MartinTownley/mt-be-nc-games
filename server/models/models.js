@@ -1,4 +1,6 @@
 const db = require("../../db/connection.js");
+const { checkExists } = require("../../utils.js");
+
 // -- CATEGORIES --
 exports.fetchCategories = () => {
   const queryString = `
