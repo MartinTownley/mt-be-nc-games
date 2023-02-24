@@ -68,7 +68,8 @@ exports.fetchCommentsByReviewId = (id) => {
 };
 
 exports.insertCommentByReviewId = (id, username, comment_body) => {
-  return exports.fetchReviewById(id).then((response) => {
+  // check for 404 first:
+  return exports.fetchReviewById(id).then((review) => {
     const queryString = `
     INSERT into comments
     (body, review_id, author)
@@ -76,7 +77,7 @@ exports.insertCommentByReviewId = (id, username, comment_body) => {
     RETURNING *
     ;`;
     return db
-      .query(queryString, [comment_body, response.review_id, username])
+      .query(queryString, [comment_body, review.review_id, username])
       .then(({ rows }) => {
         const comment = rows[0];
 
@@ -86,15 +87,18 @@ exports.insertCommentByReviewId = (id, username, comment_body) => {
 };
 
 exports.updateReviewById = (id, inc_votes) => {
-  const queryString = `
-  UPDATE reviews
-  SET votes = votes + $1
-  WHERE review_id = $2
-  RETURNING *
-  ;`;
-  return db.query(queryString, [inc_votes, id]).then((response) => {
-    const review = response.rows[0];
-    console.log(review, "<<updated review");
-    return review;
+  return exports.fetchReviewById(id).then((review) => {
+    const queryString = `
+    UPDATE reviews
+    SET votes = votes + $1
+    WHERE review_id = $2
+    RETURNING *
+    ;`;
+    return db
+      .query(queryString, [inc_votes, review.review_id])
+      .then((response) => {
+        const review = response.rows[0];
+        return review;
+      });
   });
 };

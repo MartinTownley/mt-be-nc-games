@@ -64,11 +64,8 @@ exports.postCommentByReviewId = (request, response, next) => {
 exports.patchReviewById = (request, response, next) => {
   const { inc_votes } = request.body;
   const { review_id } = request.params;
-  console.log(inc_votes, "<< inc_votes");
-  console.log(review_id, "<< review_id");
   updateReviewById(review_id, inc_votes)
     .then((updated_review) => {
-      console.log(updated_review, "<< updated review in controller");
       response.status(200).send({ updated_review });
     })
     .catch((err) => {

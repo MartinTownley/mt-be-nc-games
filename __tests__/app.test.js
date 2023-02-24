@@ -127,7 +127,6 @@ describe("app", () => {
           .send(requestBody)
           .expect(200)
           .then(({ body }) => {
-            console.log(body, "<< body (app.test)");
             expect(body.updated_review).toEqual({
               review_id: 1,
               title: "Agricola",
@@ -149,7 +148,6 @@ describe("app", () => {
           .send(requestBody)
           .expect(200)
           .then(({ body }) => {
-            console.log(body, "<< body (app.test)");
             expect(body.updated_review).toEqual({
               review_id: 3,
               title: "Ultimate Werewolf",
@@ -193,6 +191,16 @@ describe("app", () => {
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).toBe("Invalid input");
+          });
+      });
+      it("404: responds with the correct error messsage for a valid but non-existent review_id", () => {
+        const requestBody = { inc_votes: 2 };
+        return request(app)
+          .patch("/api/reviews/999")
+          .send(requestBody)
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("ID does not exist");
           });
       });
     });
