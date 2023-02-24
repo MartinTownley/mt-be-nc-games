@@ -119,11 +119,35 @@ describe("app", () => {
           });
       });
     });
+    describe("PATCH", () => {
+      it("200: responds with the updated review", () => {
+        const requestBody = { inc_votes: 10 };
+        return request(app)
+          .patch("/api/reviews/1")
+          .send(requestBody)
+          .expect(200)
+          .then(({ body }) => {
+            console.log(body, "<< body (app.test)");
+            expect(body.updated_review).toEqual({
+              review_id: 1,
+              title: "Agricola",
+              review_body: "Farmyard fun!",
+              designer: "Uwe Rosenberg",
+              review_img_url:
+                "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+              votes: 11,
+              category: "euro game",
+              owner: "mallionaire",
+              created_at: "2021-01-18T10:00:20.514Z",
+            });
+          });
+      });
+    });
   });
 
   describe("/api/reviews/:review_id/comments", () => {
     describe("GET", () => {
-      it("responds with an array of comments for the given review_id", () => {
+      it("200: responds with an array of comments for the given review_id", () => {
         return request(app)
           .get("/api/reviews/2/comments")
           .expect(200)

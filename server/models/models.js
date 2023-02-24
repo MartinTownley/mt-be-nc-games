@@ -84,3 +84,17 @@ exports.insertCommentByReviewId = (id, username, comment_body) => {
       });
   });
 };
+
+exports.updateReviewById = (id, inc_votes) => {
+  const queryString = `
+  UPDATE reviews
+  SET votes = votes + $1
+  WHERE review_id = $2
+  RETURNING *
+  ;`;
+  return db.query(queryString, [inc_votes, id]).then((response) => {
+    const review = response.rows[0];
+    console.log(review, "<<updated review");
+    return review;
+  });
+};

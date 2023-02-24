@@ -15,9 +15,11 @@
 
 -- select all columns + count
 
-SELECT * 
-FROM comments
-WHERE comments.review_id = 2;
-
-
+UPDATE reviews
+SET 
+    votes = 5
+WHERE 
+    review_id = 1
+RETURNING *
+;
 
