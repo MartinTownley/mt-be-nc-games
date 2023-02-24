@@ -109,7 +109,6 @@ exports.updateReviewById = (id, inc_votes) => {
 
 // -- USERS --
 exports.fetchUsers = () => {
-  console.log("model: fetchUsers called");
   const queryString = `
     SELECT *
     FROM users

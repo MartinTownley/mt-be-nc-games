@@ -78,7 +78,6 @@ exports.patchReviewById = (request, response, next) => {
 
 // -- USERS --
 exports.getUsers = (request, response, next) => {
-  console.log("controller: getUsers called");
   fetchUsers()
     .then((users) => {
       response.status(200).send({ users });
