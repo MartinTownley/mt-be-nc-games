@@ -175,6 +175,16 @@ describe("app", () => {
             expect(body.msg).toBe("Invalid input");
           });
       });
+      it("400: responds with the correct error message for an incorrect datatype", () => {
+        const requestBody = { inc_votes: "incorrect-datatype" };
+        return request(app)
+          .patch("/api/reviews/1")
+          .send(requestBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
+          });
+      });
     });
   });
 
@@ -270,7 +280,7 @@ describe("app", () => {
             expect(body.msg).toBe("Invalid input");
           });
       });
-      it("400: responds with the correct error message for a malformed request", () => {
+      it("400: responds with the correct error message for an incorrect datatype", () => {
         const requestBody = {
           username: "not-a-username",
           body: "I am a valid body",
