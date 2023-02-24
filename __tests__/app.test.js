@@ -185,6 +185,16 @@ describe("app", () => {
             expect(body.msg).toBe("Invalid input");
           });
       });
+      it("400: responds with the correct error message for a bad review_id", () => {
+        const requestBody = { inc_votes: 2 };
+        return request(app)
+          .patch("/api/reviews/not-and-id")
+          .send(requestBody)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Invalid input");
+          });
+      });
     });
   });
 
