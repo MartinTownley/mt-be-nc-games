@@ -1,5 +1,6 @@
 const db = require("../../db/connection.js");
-const { checkExists } = require("../../utils.js");
+const { checkCategoryExists } = require("../../utils.js");
+//const { checkCategoryExists } = require("../../utils.js");
 
 // -- CATEGORIES --
 exports.fetchCategories = () => {
@@ -14,24 +15,30 @@ exports.fetchCategories = () => {
 
 // -- REVIEWS --
 exports.fetchReviews = (category) => {
-  console.log(category, "<< model: category");
   const queryValues = [];
-  let queryString = `
-  SELECT reviews.*, CAST( COUNT(comment_id) AS INT ) AS comment_count
+  let queryStringStart = `SELECT reviews.*, CAST( COUNT(comment_id) AS INT ) AS comment_count
   FROM reviews
-  LEFT JOIN comments ON reviews.review_id = comments.review_id
-  `;
+  LEFT JOIN comments ON reviews.review_id = comments.review_id`;
 
   if (category) {
     queryValues.push(category);
-    queryString += ` WHERE category = $1`;
+    queryStringStart += ` WHERE category = $1`;
   }
-  queryString += ` GROUP BY reviews.review_id
-  ORDER BY reviews.created_at DESC
-  ;
-  `;
-  return db.query(queryString, queryValues).then((response) => {
-    return response.rows;
+
+  let queryStringEnd = ` GROUP BY reviews.review_id
+  ORDER BY reviews.created_at DESC;`;
+
+  const finalQueryString = queryStringStart.concat(queryStringEnd);
+  return db.query(finalQueryString, queryValues).then(({ rows }) => {
+    if (rows.length === 0) {
+      return checkCategoryExists(category);
+    } else if (rows.length === 1) {
+      // all reviews per category as an object
+      return rows[0];
+    } else {
+      // returns the array
+      return rows;
+    }
   });
 };
 
@@ -65,7 +72,6 @@ exports.fetchCommentsByReviewId = (id) => {
     .query(queryString, [id])
     .then((response) => {
       // check if the response is an empty array because there are no comments, or because the review_id doesn't exist:
-
       if (response.rows[0] === undefined) {
         return exports.fetchReviewById(id);
       }

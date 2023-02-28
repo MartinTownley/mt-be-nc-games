@@ -94,14 +94,14 @@ describe("app", () => {
               });
             });
         });
-        // it("404: responds with the correct error message for an invalid query", () => {
-        //   return request(app)
-        //     .get("/api/reviews?category=not-a-valid-category")
-        //     .expect(404)
-        //     .then(({ body }) => {
-        //       expect(body.msg).toBe("Resource not found");
-        //     });
-        // });
+        it("404: responds with the correct error message for an invalid query", () => {
+          return request(app)
+            .get("/api/reviews?category=not-a-valid-category")
+            .expect(404)
+            .then(({ body }) => {
+              expect(body.msg).toBe("Resource not found");
+            });
+        });
       });
     });
   });
