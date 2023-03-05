@@ -21,7 +21,8 @@ exports.getCategories = (request, response, next) => {
 
 // -- REVIEWS --
 exports.getReviews = (request, response, next) => {
-  fetchReviews()
+  const { category } = request.query;
+  fetchReviews(category)
     .then((reviews) => {
       response.status(200).send({ reviews });
     })
